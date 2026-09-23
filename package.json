@@ -16,5 +16,8 @@
   "main": "index.js",
   "scripts": {
     "test": "npx serve ."
+  },
+  "devDependencies": {
+    "prettier": "^3.9.9"
   }
 }
