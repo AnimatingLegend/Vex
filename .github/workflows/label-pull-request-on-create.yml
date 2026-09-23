@@ -12,7 +12,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
   queue: max
 
-
 jobs:
   # Apply `status: pending triage` to newly created pull requests
   apply-pending-review:

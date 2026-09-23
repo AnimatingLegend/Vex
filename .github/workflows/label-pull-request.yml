@@ -6,7 +6,7 @@
 
 name: "Pull Request Labeler"
 on:
-- pull_request_target
+  - pull_request_target
 
 # Ensure only one task can execute for a given PR at a time.
 concurrency:
@@ -21,7 +21,7 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-    - name: Set basic labels
-      uses: actions/labeler@v6
-      with:
-        sync-labels: true
+      - name: Set basic labels
+        uses: actions/labeler@v6
+        with:
+          sync-labels: true

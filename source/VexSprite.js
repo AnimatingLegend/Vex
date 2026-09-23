@@ -3,139 +3,162 @@ import VexGlobal from "./VexGlobal.js";
 import VexAnimationController from "./animation/VexAnimationController.js";
 
 export default class VexSprite extends VexBasic {
-    constructor(x = 0, y = 0) {
-        super();
-        this.x = x;
-        this.y = y;
-        this.width = 0;
-        this.height = 0;
+  constructor(x = 0, y = 0) {
+    super();
+    this.x = x;
+    this.y = y;
+    this.width = 0;
+    this.height = 0;
 
-        this.velocity = { x: 0, y: 0 };
-        this.acceleration = { x: 0, y: 0 };
-        this.drag = { x: 0, y: 0 };
-        this.maxVelocity = { x: 10000, y: 10000 };
+    this.velocity = { x: 0, y: 0 };
+    this.acceleration = { x: 0, y: 0 };
+    this.drag = { x: 0, y: 0 };
+    this.maxVelocity = { x: 10000, y: 10000 };
 
-        this.angle = 0;
-        this.angularVelocity = 0;
-        this.anglularAcceleration = 0;
-        this.angularDrag = 0;
-        this.maxAngular = 10000;
+    this.angle = 0;
+    this.angularVelocity = 0;
+    this.anglularAcceleration = 0;
+    this.angularDrag = 0;
+    this.maxAngular = 10000;
 
-        this.scale = { x: 1, y: 1 };
-        this.alpha = 1;
-        this.scrollFactor = { x: 1, y: 1 };
-        this.offset = { x: 0, y: 0 };
+    this.scale = { x: 1, y: 1 };
+    this.alpha = 1;
+    this.scrollFactor = { x: 1, y: 1 };
+    this.offset = { x: 0, y: 0 };
 
-        this.image = null;
-        this.animationController = new VexAnimationController(this);
+    this.image = null;
+    this.animationController = new VexAnimationController(this);
 
-        // Simple whole-image color tint fallback if no spritesheet is loaded.
-        // TODO: create a VexGraphics class for this instead of using the sprite itself.
-        this.color = '#ffffff';
+    // Simple whole-image color tint fallback if no spritesheet is loaded.
+    // TODO: create a VexGraphics class for this instead of using the sprite itself.
+    this.color = "#ffffff";
+  }
+
+  async loadGraphic(path, frameWidth = 0, frameHeight = 0) {
+    this.image = await VexGlobal.loadImage(path);
+    this.width = frameWidth || this.image.width;
+    this.height = frameHeight || this.image.height;
+    if (frameWidth && frameHeight) {
+      this.animationController._setupSheet(this.image, frameWidth, frameHeight);
     }
+    return this;
+  }
 
-    async loadGraphic(path, frameWidth = 0, frameHeight = 0) {
-        this.image = await VexGlobal.loadImage(path);
-        this.width = frameWidth || this.image.width;
-        this.height = frameHeight || this.image.height;
-        if (frameWidth && frameHeight) {
-            this.animationController._setupSheet(this.image, frameWidth, frameHeight);
-        }
-        return this;
+  makeGraphic(width, height, color = "#ffffff") {
+    this.width = width;
+    this.height = height;
+    this.color = color;
+    this.image = null;
+    return this;
+  }
+
+  /**
+   * Applies drag-limited acceleration integration.
+   */
+  _updateMotion(dt) {
+    const vx = this._computeVelocity(
+      this.velocity.x,
+      this.acceleration.x,
+      this.drag.x,
+      this.maxVelocity.x,
+      dt,
+    );
+    const vy = this._computeVelocity(
+      this.velocity.y,
+      this.acceleration.y,
+      this.drag.y,
+      this.maxVelocity.y,
+      dt,
+    );
+    this.x += (this.velocity.x + vx) * 0.5 * dt;
+    this.y += (this.velocity.y + vy) * 0.5 * dt;
+    this.velocity.x = vx;
+    this.velocity.y = vy;
+
+    const va = this._computeVelocity(
+      this.angularVelocity,
+      this.anglularAcceleration,
+      this.angularDrag,
+      this.maxAngular,
+      dt,
+    );
+    this.angle += (this.angularVelocity + va) * 0.5 * dt;
+    this.angularVelocity = va;
+  }
+
+  _computeVelocity(velocity, acceleration, drag, max, dt) {
+    if (acceleration !== 0) velocity += acceleration * dt;
+    else if (drag !== 0) {
+      const dragForce = drag * dt;
+      if (velocity - dragForce > 0) velocity -= dragForce;
+      else if (velocity + dragForce < 0) velocity += dragForce;
+      else velocity = 0;
     }
+    if (velocity !== 0) velocity = Math.max(Math.min(velocity, max), -max);
+    return velocity;
+  }
 
-    makeGraphic(width, height, color = '#ffffff') {
-        this.width = width;
-        this.height = height;
-        this.color = color;
-        this.image = null;
-        return this;
-    }
+  update(dt) {
+    this._updateMotion(dt);
+    this.animationController.update(dt);
+  }
 
-    /**
-     * Applies drag-limited acceleration integration.
-     */
-    _updateMotion(dt) {
-        const vx = this._computeVelocity(this.velocity.x, this.acceleration.x, this.drag.x, this.maxVelocity.x, dt);
-        const vy = this._computeVelocity(this.velocity.y, this.acceleration.y, this.drag.y, this.maxVelocity.y, dt);
-        this.x += (this.velocity.x + vx) * 0.5 * dt;
-        this.y += (this.velocity.y + vy) * 0.5 * dt;
-        this.velocity.x = vx;
-        this.velocity.y = vy;
+  draw(ctx, camera) {
+    if (!this.visible) return;
+    const sx =
+      this.x + camera.scroll.x * (1 - this.scrollFactor.x) - this.offset.x;
+    const sy =
+      this.y + camera.scroll.y * (1 - this.scrollFactor.y) - this.offset.y;
 
-        const va = this._computeVelocity(this.angularVelocity, this.anglularAcceleration, this.angularDrag, this.maxAngular, dt);
-        this.angle += (this.angularVelocity + va) * 0.5 * dt;
-        this.angularVelocity = va;
-    }
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.translate(sx + this.width / 2, sy + this.height / 2);
+    ctx.rotate((this.angle * Math.PI) / 180);
+    ctx.scale(this.scale.x, this.scale.y);
 
-    _computeVelocity(velocity, acceleration, drag, max, dt) {
-        if (acceleration !== 0)
-            velocity += acceleration * dt;
-        else if (drag !== 0) {
-            const dragForce = drag * dt;
-            if (velocity - dragForce > 0)
-                velocity -= dragForce;
-            else if (velocity + dragForce < 0)
-                velocity += dragForce;
-            else
-                velocity = 0;
-        }
-        if (velocity !== 0)
-            velocity = Math.max(Math.min(velocity, max), -max);
-        return velocity;
-    }
-
-    update(dt) {
-        this._updateMotion(dt);
-        this.animationController.update(dt);
-    }
-
-    draw(ctx, camera) {
-        if (!this.visible)
-            return;
-        const sx = this.x + camera.scroll.x * (1 - this.scrollFactor.x) - this.offset.x;
-        const sy = this.y + camera.scroll.y * (1 - this.scrollFactor.y) - this.offset.y;
-
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.translate(sx + this.width / 2, sy + this.height / 2);
-        ctx.rotate((this.angle * Math.PI) / 180);
-        ctx.scale(this.scale.x, this.scale.y);
-
-        if (this.image) {
-            const frame = this.animation.currentFrame;
-            if (frame) {
-                ctx.drawImage(
-                    this.image, 
-                    frame.x, frame.y, frame.w, frame.h, 
-                    -this.width / 2, -this.height / 2, this.width, this.height
-                );
-            } else {
-                ctx.drawImage(
-                    this.image, 
-                    -this.width / 2, -this.height / 2, this.width, this.height
-                );
-            }
-        } else {
-            ctx.fillStyle = this.color;
-            ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
-        }
-        ctx.restore();
-    }
-
-    /**
-     * Simple AABB overlap test.
-     */
-    overlaps(other) {
-        return (
-            this.x < other.x + other.width &&
-            this.x + this.width > other.x &&
-            this.y < other.y + other.height &&
-            this.y + this.height > other.y
+    if (this.image) {
+      const frame = this.animation.currentFrame;
+      if (frame) {
+        ctx.drawImage(
+          this.image,
+          frame.x,
+          frame.y,
+          frame.w,
+          frame.h,
+          -this.width / 2,
+          -this.height / 2,
+          this.width,
+          this.height,
         );
+      } else {
+        ctx.drawImage(
+          this.image,
+          -this.width / 2,
+          -this.height / 2,
+          this.width,
+          this.height,
+        );
+      }
+    } else {
+      ctx.fillStyle = this.color;
+      ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
     }
+    ctx.restore();
+  }
 
-    getMidpoint() {
-        return { x: this.x + this.width / 2, y: this.y + this.height / 2 };
-    }
+  /**
+   * Simple AABB overlap test.
+   */
+  overlaps(other) {
+    return (
+      this.x < other.x + other.width &&
+      this.x + this.width > other.x &&
+      this.y < other.y + other.height &&
+      this.y + this.height > other.y
+    );
+  }
+
+  getMidpoint() {
+    return { x: this.x + this.width / 2, y: this.y + this.height / 2 };
+  }
 }
