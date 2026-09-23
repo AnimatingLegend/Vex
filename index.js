@@ -1,0 +1,10 @@
+export { default as VexTween } from './source/animation/tweens/VexTween.js';
+export { default as VexAnimationController } from './source/animation/VexAnimationController.js';
+export { default as VexBasic } from './source/VexBasic.js';
+export { default as VexCamera } from './source/VexCamera.js';
+export { default as VexGlobal } from './source/VexGlobal.js';
+export { default as VexGame } from './source/VexGame.js';
+export { default as VexGroup } from './source/VexGroup.js';
+export { default as VexSignal } from './source/VexSignal.js';
+export { default as VexSprite } from './source/VexSprite.js';
+export { default as VexState } from './source/VexState.js';

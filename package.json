@@ -1,0 +1,20 @@
+{
+  "name": "vex.js",
+  "version": "0.1.0",
+  "description": "Vector Element Xpansion - A lightweight 2D JavaScript game engine.",
+  "homepage": "https://github.com/AnimatingLegend/vexjs#readme",
+  "bugs": {
+    "url": "https://github.com/AnimatingLegend/vexjs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnimatingLegend/vexjs.git"
+  },
+  "license": "MIT",
+  "author": "Aaron Augustin",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx serve ."
+  }
+}

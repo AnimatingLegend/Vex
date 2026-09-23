@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Operating System
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Logs
+npm-debug.log*
+*.log
+
+# Env
+.env
