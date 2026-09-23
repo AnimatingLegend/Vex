@@ -1,0 +1,16 @@
+name: Bug Report
+description: Report a bug that occurred while playing the game.
+labels: ["type: bug", "status: pending review"]
+title: "Bug Report: "
+body:
+  - type: markdown
+    attributes:
+      value: "## Describe your bug."
+
+  - type: textarea
+    attributes:
+      label: "Description (include any images, errors, etc.)"
+      description: Provide a detailed description of your bug.
+      placeholder: Describe your bug here...
+    validations:
+      required: true
