@@ -14,6 +14,7 @@ import {
  */
 export default class PlayState extends VexState {
   create() {
+    // TODO: implement a global function to center sprites, and text elements.
     this.descText = new VexText(100, 100, "Click on the block!", {
       font: "20px Courier New",
       bold: true,
@@ -44,7 +45,16 @@ export default class PlayState extends VexState {
   update(dt) {
     super.update(dt);
 
-    if (VexGlobal.mouse.justPressed) {
+    // TODO: make clickable sprites generic, not hardcoded.
+    const mouseX = VexGlobal.mouse.x;
+    const mouseY = VexGlobal.mouse.y;
+    const clickedBlock =
+      mouseX >= this.block.x &&
+      mouseX <= this.block.x + this.block.width &&
+      mouseY >= this.block.y &&
+      mouseY <= this.block.y + this.block.height;
+
+    if (VexGlobal.mouse.justPressed && clickedBlock) {
       this.particles.x = VexGlobal.mouse.x;
       this.particles.y = VexGlobal.mouse.y;
       for (let i = 0; i < 8; i++) {
