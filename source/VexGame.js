@@ -1,4 +1,4 @@
-import VexTween from "./animation/tweens/VexTween.js";
+import VexTween from "./tweens/VexTween.js";
 import VexCamera from "./VexCamera.js";
 import VexGlobal from "./VexGlobal.js";
 

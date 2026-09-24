@@ -1,5 +1,6 @@
-export { default as VexTween } from "./source/animation/tweens/VexTween.js";
 export { default as VexAnimationController } from "./source/animation/VexAnimationController.js";
+export { default as VexText } from "./source/text/VexText.js";
+export { default as VexTween } from "./source/tweens/VexTween.js";
 export { default as VexBasic } from "./source/VexBasic.js";
 export { default as VexCamera } from "./source/VexCamera.js";
 export { default as VexGlobal } from "./source/VexGlobal.js";
