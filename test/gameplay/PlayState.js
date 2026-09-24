@@ -1,10 +1,11 @@
-import { VexState, VexSprite, VexGroup, VexGlobal } from "../index.js";
+import { VexState, VexSprite, VexGroup, VexGlobal } from "../../index.js";
 
 /**
  * @file PlayState.js
  *
- * A minimal "hello world" for Vex: a player you move with arrow
- *  keys, gravity, a platform to land on, and a camera that follows you.
+ * A minimal "hello world" for Vex:
+ * A player you move with arrow keys, gravity, a platform to land on,
+ *  and a camera that follows you.
  */
 export default class PlayState extends VexState {
   create() {
