@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - VexAnimationController
   - VexEmitter
   - VexText
+  - VexTilemap
   - VexTween
   - VexBasic
   - VexCamera
@@ -68,9 +69,18 @@ if (VexGlobal.mouse.justPressed) {
 VexTween.tween(sprite, { x: 300 }, 1, { ease: Tween.Easing.quadOut });
 ```
 
+- `Tilemap`: CSV-based map parsing and camera-culled rendering.
+
+```js
+const tilemap = new VexTilemap(0, 0);
+await tilemap.loadMapFromCSV(csvData, "tileset.png", 32, 32);
+this.add(tilemap);
+```
+
 - `PlayState`:
   - [Gameplay Demo](./test/gameplay/PlayState.js) with gravity, platform collision, & camera follow.
   - [Click Counter Demo](./test/text/PlayState.js) with live text rendering, and particle spawning.
+  - [Tilemap Demo](./test/tilemap/PlayState.js) with CSV level loading & camera-culled tile rendering.
 - `Deps`: `package-lock.json` for reproducible installs.
 
 ### Changed
