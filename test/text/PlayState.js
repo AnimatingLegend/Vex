@@ -1,4 +1,10 @@
-import { VexState, VexSprite, VexGlobal, VexText } from "../../index.js";
+import {
+  VexState,
+  VexSprite,
+  VexGlobal,
+  VexText,
+  VexEmitter,
+} from "../../index.js";
 
 /**
  * @file PlayState.js
@@ -30,12 +36,21 @@ export default class PlayState extends VexState {
     this.add(this.scoreText);
 
     this.score = 0;
+
+    this.particles = new VexEmitter(0, 0);
+    this.add(this.particles);
   }
 
   update(dt) {
     super.update(dt);
 
     if (VexGlobal.mouse.justPressed) {
+      this.particles.x = VexGlobal.mouse.x;
+      this.particles.y = VexGlobal.mouse.y;
+      for (let i = 0; i < 8; i++) {
+        this.particles.emit();
+      }
+
       this.score += 20;
       this.scoreText.setText(`Score: ${this.score}`);
     }
