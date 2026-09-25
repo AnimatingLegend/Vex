@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - VexEmitter
   - VexText
   - VexTilemap
+  - VexSound
   - VexTween
   - VexBasic
   - VexCamera
@@ -77,10 +78,19 @@ await tilemap.loadMapFromCSV(csvData, "tileset.png", 32, 32);
 this.add(tilemap);
 ```
 
+- `Sound`: Background music streaming and volume via `VexSound`.
+
+```js
+const music = VexGlobal.playMusic("vexTheme.wav");
+if (music !== null) music.fadeIn(2, 0.8);
+VexGlobal.stopMusic(2); // Smoothly fades out over 2 seconds.
+```
+
 - `PlayState`:
   - [Gameplay Demo](./test/gameplay/PlayState.js) with gravity, platform collision, & camera follow.
   - [Click Counter Demo](./test/text/PlayState.js) with live text rendering, and particle spawning.
   - [Tilemap Demo](./test/tilemap/PlayState.js) with CSV level loading & camera-culled tile rendering.
+  - [Sound Demo](./test/sound/PlayState.js) with background music playback, looping, and volume fading.
 - `Deps`: `package-lock.json` for reproducible installs.
 
 ### Changed

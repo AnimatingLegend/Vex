@@ -1,3 +1,5 @@
+import VexSound from "./sound/VexSound.js";
+
 /**
  * @file VexGlobal.js
  *
@@ -68,9 +70,44 @@ const VexGlobal = {
     },
   },
 
+  // Sound Cache: keyed by URL so repeated `load()` calls reuse the same resource.
+  music: null,
+  _soundCache: new Map(),
+
+  loadSound(path) {
+    if (this._soundCache.has(path)) return this._soundCache.get(path);
+    const audio = new VexSound(path);
+    this._soundCache.set(path, audio);
+    return audio;
+  },
+
+  playSound(path, volume = 1) {
+    const base = this.loadSound(path);
+    // Clone so overlapping plays of the same effect don't cut eachother off.
+    const instance = new VexSound();
+    instance.audio = base.audio.cloneNode();
+    instance.volume = volume;
+    instance.play();
+    return instance;
+  },
+
+  playMusic(path, volume = 1, loop = true) {
+    if (this.music) this.music.stop();
+    this.music = new VexSound(path);
+    this.music.loop = loop;
+    this.music.volume = volume;
+    this.music.play();
+    return this.music;
+  },
+
+  stopMusic(fadeOut = 0) {
+    if (!this.music) return;
+    if (fadeOut > 0) this.music.fadeOut(fadeOut);
+    else this.music.stop();
+  },
+
   // Asset Cache: keyed by URL so repeated `load()` calls reuse the same resource.
   _imageCache: new Map(),
-  _soundCache: new Map(),
 
   async loadImage(path) {
     if (this._imageCache.has(path)) return this._imageCache.get(path);
@@ -82,22 +119,6 @@ const VexGlobal = {
     img.src = path;
     this._imageCache.set(path, promise);
     return promise;
-  },
-
-  loadSound(path) {
-    if (this._soundCache.has(path)) return this._soundCache.get(path);
-    const audio = new Audio(path);
-    this._soundCache.set(path, audio);
-    return audio;
-  },
-
-  playSound(path, volume = 1) {
-    const base = this.loadSound(path);
-    // Clone so overlapping plays of the same effect don't cut eachother off.
-    const instance = base.cloneNode();
-    instance.volume = volume;
-    instance.play();
-    return instance;
   },
 
   switchState(newState) {
